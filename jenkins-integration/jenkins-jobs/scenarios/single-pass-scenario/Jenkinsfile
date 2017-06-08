@@ -7,8 +7,11 @@ pipeline.single_pipeline([
         job_name: 'singletest',
         gatling_simulation_config: '../simulation-runner/config/scenarios/pe-couch-medium-3.json',
         server_version: [
-                type: "pe",
-                pe_version: "2016.2.1"
+                type: "oss",
+                version: "latest"
+        ],
+        agent_version: [
+          version: "4.10.1"
         ],
         code_deploy: [
                 type: "r10k",
