@@ -1,0 +1,48 @@
+node {
+    checkout scm
+    pipeline = load 'jenkins-integration/jenkins-jobs/common/scripts/jenkins/pipeline.groovy'
+}
+pipeline.multipass_pipeline([
+        [job_name: 'puppet-agent-4-1000-agents',
+         gatling_simulation_config: '../simulation-runner/config/scenarios/foss25x-medium-500-2-hours.json',
+         server_version: [
+                 type: "oss",
+                 version: "latest"
+         ],
+         agent_version: [
+                  version: "1.10.1"
+          ],
+         code_deploy: [
+                 type: "r10k",
+                 control_repo: "git@github.com:puppetlabs/puppetlabs-puppetserver_perf_control.git",
+                 basedir: "/etc/puppetlabs/code-staging/environments",
+                 environments: ["production"],
+                 hiera_config_source_file: "/etc/puppetlabs/code-staging/environments/production/root_files/hiera.yaml"],
+         background_scripts: [
+                 "./jenkins-jobs/common/scripts/background/curl-server-metrics-loop.sh"
+         ],
+         archive_sut_files: [
+                 "/var/log/puppetlabs/puppetserver/metrics.json"
+         ]],
+        [job_name: 'puppet-agent-5-1000-agents',
+         gatling_simulation_config: '../simulation-runner/config/scenarios/foss25x-medium-500-2-hours.json',
+         server_version: [
+                 type: "oss",
+                 version: "latest"
+         ],
+         agent_version: [
+                  version: "652b82bf76f8e15fd71f6049cb721830f817954b"
+         ],
+         code_deploy: [
+                 type: "r10k",
+                 control_repo: "git@github.com:puppetlabs/puppetlabs-puppetserver_perf_control.git",
+                 basedir: "/etc/puppetlabs/code-staging/environments",
+                 environments: ["production"],
+                 hiera_config_source_file: "/etc/puppetlabs/code-staging/environments/production/root_files/hiera.yaml"],
+         background_scripts: [
+                 "./jenkins-jobs/common/scripts/background/curl-server-metrics-loop.sh"
+         ],
+         archive_sut_files: [
+                 "/var/log/puppetlabs/puppetserver/metrics.json"
+         ]
+        ]])
